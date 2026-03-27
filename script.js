@@ -43,9 +43,16 @@ function playSequence() {
 
 startBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    startBtn.style.display = 'none';
-    imgLayer.style.opacity = 1; // Bring the blade to full focus
     
-    // Brief pause on the blade before the sequence starts
-    setTimeout(playSequence, 2000);
+    // Add a "clicked" state for a split second
+    startBtn.style.letterSpacing = '10px';
+    startBtn.style.opacity = '0';
+    
+    setTimeout(() => {
+        startBtn.style.display = 'none';
+        imgLayer.style.opacity = 1; 
+        
+        // Let the blade breathe for 1.5 seconds before the first text line
+        setTimeout(playSequence, 1500);
+    }, 600);
 });

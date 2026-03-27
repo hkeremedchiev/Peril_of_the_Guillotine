@@ -20,6 +20,7 @@ body, html {
     background-position: center;
     transition: opacity 2.5s ease-in-out;
     opacity: 0;
+    filter: sepia(20%) contrast(110%); /* Adds a bit more grit */
 }
 
 #text-overlay {
@@ -56,28 +57,36 @@ body, html {
 
 #start-btn {
     position: absolute;
+    bottom: 25%; /* Slightly higher to leave room for a future "Sub-text" if needed */
+    left: 50%;
+    transform: translateX(-50%); /* Perfectly centered */
     z-index: 100;
-    padding: 15px 30px;
-    background: transparent;
-    border: 1px solid #660000; /* Dried blood red */
-    color: #aa0000;
+    padding: 18px 40px;
+    background: rgba(10, 10, 10, 0.85); /* Deep charcoal */
+    border: 1px solid #eeeeee; /* Crisp white border */
+    color: #eeeeee;
     font-family: 'Garamond', serif;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     text-transform: uppercase;
-    letter-spacing: 4px;
+    letter-spacing: 5px;
     cursor: pointer;
-    transition: all 0.5s;
-    background-color: rgba(0,0,0,0.6);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 #start-btn:hover {
-    color: white;
-    border-color: white;
-    box-shadow: 0 0 20px rgba(255,255,255,0.2);
-    background-color: rgba(0,0,0,0.8);
+    color: #bc0000; /* A slightly more "dried blood" red */
+    border-color: #bc0000;
+    background: rgba(20, 0, 0, 0.9);
+    letter-spacing: 7px; /* Subtle expansion effect on hover */
+    box-shadow: 0 0 20px rgba(188, 0, 0, 0.3);
 }
 
-#image-layer {
-    /* ... keep previous ... */
-    filter: sepia(20%) contrast(110%); /* Adds a bit more grit */
-}
+/* Ensure the text overlay uses the same positioning */
+#text-overlay {
+    position: absolute;
+    bottom: 20%;
+    width: 100%;
+    text-align: center;
+   }
+
