@@ -17,7 +17,6 @@ body, html {
     height: 100%;
 }
 
-/* --- IMAGE LAYER (The Backgrounds) --- */
 #image-layer {
     width: 100%; 
     height: 100%;
@@ -29,7 +28,6 @@ body, html {
     z-index: 1;
 }
 
-/* --- ATMOSPHERIC VIGNETTE --- */
 #vignette {
     position: absolute;
     top: 0; left: 0;
@@ -39,7 +37,6 @@ body, html {
     z-index: 5;
 }
 
-/* --- TEXT OVERLAY --- */
 #text-overlay {
     position: absolute;
     bottom: 20%;
@@ -56,78 +53,79 @@ body, html {
     pointer-events: auto; 
 }
 
-/* --- THE UNIFIED "SHINY DARK RED" BUTTON --- */
+/* --- THE UNIFIED BUTTON --- */
 .game-btn {
-    padding: 18px 40px;
-    background: rgba(10, 10, 10, 0.9); /* Almost black */
-    border: 1px solid #eeeeee; /* The clean frame */
+    padding: 12px 30px;
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid #eeeeee;
     color: #eeeeee;
-    font-family: 'Garamond', serif;
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    cursor: pointer;
-    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother transition */
-    box-shadow: 0 0 15px rgba(0,0,0,0.7);
-    display: inline-block;
-    margin-top: 25px;
-    outline: none;
-}
-
-/* THE PERFECTED DARK HOVER */
-.game-btn:hover {
-    /* Deeper, darker wine red */
-    background: rgba(60, 0, 0, 0.95) !important; 
-    color: #ffffff;
-    /* Frame turns to a dark, slightly metallic red */
-    border-color: #8b0000; 
-    
-    /* THE SHINE: 
-       Outer: Dark crimson glow. 
-       Inner: Subtle highlight on the top edge for a "shiny" look */
-    box-shadow: 0 0 30px rgba(80, 0, 0, 0.9), 
-                inset 0 0 20px rgba(0, 0, 0, 0.6), 
-                inset 0 5px 10px rgba(255, 0, 0, 0.2);
-    
-    transform: scale(1.02);
-}
-
-/* --- START MENU UI --- */
-#start-prompt-container {
-    position: absolute;
-    bottom: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 100;
-}
-
-#game-setting {
-    color: #d4d4d4;
     font-family: 'Garamond', serif;
     font-size: 1.2rem;
     text-transform: uppercase;
-    letter-spacing: 8px;
-    margin-bottom: 20px;
-    opacity: 0.8;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    display: inline-block;
+    margin-top: 15px;
 }
 
-/* --- INTERMISSION CONTENT --- */
-.intermission-content {
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.8;
+.game-btn:hover:not(:disabled) {
+    background: rgba(60, 0, 0, 0.95) !important; 
+    border-color: #8b0000; 
+    box-shadow: 0 0 20px rgba(80, 0, 0, 0.9);
+    transform: scale(1.05);
+}
+
+.game-btn:disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    border-color: #444;
+}
+
+/* --- TIER OPTIONS UI --- */
+.options-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 95%;
+    max-width: 1100px;
+}
+
+.tier-card {
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid #333;
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    min-height: 200px;
+}
+
+.tier-card h4 {
+    margin: 0 0 10px 0;
+    color: #8b0000;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+.tier-card p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #bbb;
     font-style: normal;
-    font-size: 1.3rem;
-    padding: 20px;
+    margin-bottom: 10px;
 }
 
-/* --- PASSPORT UI --- */
+/* --- INTERMISSION & PASSPORT --- */
+.intermission-content { max-width: 800px; margin: 0 auto; line-height: 1.8; font-style: normal; font-size: 1.3rem; padding: 20px; }
+
 .passport-container {
-    background: #e6d5b8; /* Weathered Parchment */
-    color: #1a1512; /* Faded Ink */
+    background: #e6d5b8;
+    color: #1a1512;
     padding: 30px;
     border: 1px solid #c4b498;
     transform: rotate(-1deg); 
@@ -135,34 +133,9 @@ body, html {
     width: 350px;
     margin: 0 auto;
     text-align: left;
-    font-family: 'Crimson Text', 'Garamond', serif;
+    font-family: 'Crimson Text', serif;
 }
 
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 15px 0;
-    font-weight: bold;
-    font-style: normal; /* Removes inherited italics */
-}
-
-.stat-controls {
-    display: flex;
-    align-items: center;
-}
-
-.stat-btn {
-    background: #1a1512;
-    color: #e6d5b8;
-    border: none;
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: 0.2s;
-}
-
-.stat-btn:hover {
-    background: #8b0000; /* Red hover for the parchment buttons */
-}
+.stat-row { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; font-weight: bold; font-style: normal; }
+.stat-controls { display: flex; align-items: center; gap: 10px; }
+.stat-btn { background: #1a1512; color: #e6d5b8; border: none; width: 28px; height: 28px; cursor: pointer; }
