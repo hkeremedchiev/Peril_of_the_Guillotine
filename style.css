@@ -54,12 +54,33 @@ body, html {
     font-size: 0.8rem;
     z-index: 10;
 }
-
-#start-btn {
+#start-prompt-container {
     position: absolute;
-    bottom: 25%; /* Slightly higher to leave room for a future "Sub-text" if needed */
+    bottom: 25%;
     left: 50%;
-    transform: translateX(-50%); /* Perfectly centered */
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100;
+}
+
+#game-setting {
+    color: #d4d4d4;
+    font-family: 'Garamond', serif;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 8px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+    font-weight: normal;
+}
+/* Adjust the button so it doesn't need its own centering logic anymore */
+#start-btn {
+    position: relative; /* Changed from absolute */
+    bottom: 0; 
+    left: 0;
+    transform: none;
     z-index: 100;
     padding: 18px 40px;
     background: rgba(10, 10, 10, 0.85); /* Deep charcoal */

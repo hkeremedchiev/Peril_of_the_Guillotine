@@ -10,6 +10,8 @@ const container = document.getElementById('intro-container');
 const imgLayer = document.getElementById('image-layer');
 const textLayer = document.getElementById('text-overlay');
 const startBtn = document.getElementById('start-btn');
+const startContainer = document.getElementById('start-prompt-container'); 
+
 
 // Set the initial image immediately so it's not a black screen
 imgLayer.style.backgroundImage = "url('intro_blade.jpg')";
@@ -41,18 +43,19 @@ function playSequence() {
     }, 1000);
 }
 
+
 startBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     
-    // Add a "clicked" state for a split second
-    startBtn.style.letterSpacing = '10px';
-    startBtn.style.opacity = '0';
+    // Fade out the whole starting UI (Setting + Button)
+    startContainer.style.transition = 'opacity 0.8s ease';
+    startContainer.style.opacity = '0';
     
     setTimeout(() => {
-        startBtn.style.display = 'none';
+        startContainer.style.display = 'none';
         imgLayer.style.opacity = 1; 
         
-        // Let the blade breathe for 1.5 seconds before the first text line
+        // Blade focus pause
         setTimeout(playSequence, 1500);
-    }, 600);
+    }, 800);
 });
