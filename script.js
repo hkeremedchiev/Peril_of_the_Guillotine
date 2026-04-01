@@ -4,12 +4,32 @@ const IMG_PATH = "Pictures/";
 let stats = { prowess: 0, rhetoric: 0, subterfuge: 0 }; 
 let pool = 12;
 let playerResources = { health: 10, gold: 5, suspicion: 0 };
-let currentStep = 0;
+let currentSceneIndex = 0;
 
-const introData = [
-    { img: 'king_is_dead.jpg', text: "The King is dead.", duration: 5500 },
-    { img: 'ruined_city.jpg', text: "Paris has fallen into the hands of the mob.", duration: 5000 },
-    { img: 'the_warrant.jpg', text: "And your name is on the list.", duration: 6000 }
+// --- DATABASE: ADD ALL SCENES HERE ---
+const allScenes = [
+    {
+        title: "The Safehouse",
+        img: "Ch1_Sc1.png",
+        type: "Open",
+        lockSkill: "", 
+        intro: "The floorboards groaned under Monsieur’s boots—a sound that, only a month ago, he would never have noticed. Now, it sounded like a gunshot. He stood in the center of the attic, clutching a leather valise that contained the pathetic remains of a life once defined by gold leaf and silk. Outside, the rhythmic chant of the Marseillaise drifted up from the street, punctuated by the sharp crack of a patrol’s boots. The door behind him was barred, but the wood felt as thin as parchment. He had to move, or he had to vanish.",
+        outro: "The attic door clicked shut behind him, leaving his old life in the dust. Monsieur descended the back stairs, blending into the early morning gray of the Rue Saint-Honoré, where the city was already waking up hungry.",
+        tierA: { text: "Slip through like a draft of cold air. Find hidden coins. [+2 Gold]", effect: {gold: 2} },
+        tierB: { text: "Panic spikes. Bolt for the stairs and catch your shoulder. [-1 Health]", effect: {health: -1} },
+        tierC: { text: "An urchin watches the door. Buy his silence with gold. [-2 Gold]", effect: {gold: -2} }
+    },
+    {
+        title: "The Bread Line",
+        img: "Ch1_Sc2.png",
+        type: "Lock",
+        lockSkill: "rhetoric", 
+        intro: "Monsieur found himself swept into a queue of hollow-cheeked citizens waiting for a ration of gray, sawdust-heavy bread. Beside him, a woman with eyes like flint studied the softness of his hands. To remain silent was to be suspicious; to speak was to risk the wrong accent.",
+        outro: "Chewing on the hard crust of his survival, Monsieur kept his chin tucked into his collar. He avoided the main thoroughfares until the massive shadow of the Porte Saint-Martin blocked his path.",
+        tierA: { text: "Mutter a dark joke about the 'sawdust seasoning'. They pull you into the crowd. [+1 Gold]", effect: {gold: 1} },
+        tierB: { text: "Drop a coin into the mud as a 'clumsy' accident to deflect her gaze. [-1 Gold]", effect: {gold: -1} },
+        tierC: { text: "A Sergeant smells the 'Versailles' on you. Slide your last purse into his hand. [-3 Gold]", effect: {gold: -3} }
+    }
 ];
 
 const imgLayer = document.getElementById('image-layer');
@@ -18,189 +38,125 @@ const startBtn = document.getElementById('start-btn');
 const continueBtn = document.getElementById('continue-btn');
 const startContainer = document.getElementById('start-prompt-container'); 
 
-// --- INITIALIZATION ---
 window.onload = () => {
     imgLayer.style.backgroundImage = `url('${IMG_PATH}intro_blade.jpg')`;
     imgLayer.style.opacity = "0.4";
-    
-    // Show continue button only if a save exists
-    if (localStorage.getItem('monsieur_save')) {
-        continueBtn.style.display = 'inline-block';
-    }
+    if (localStorage.getItem('monsieur_save')) continueBtn.style.display = 'inline-block';
 };
 
-// --- SAVE / LOAD SYSTEM ---
-function saveGame(sceneFunctionName) {
-    const gameState = {
-        stats: stats,
-        resources: playerResources,
-        currentScene: sceneFunctionName
-    };
+// --- SYSTEM FUNCTIONS ---
+function updateStatusUI() {
+    const bar = document.getElementById('status-bar');
+    if (startContainer.style.display === 'none') bar.style.display = 'flex';
+    document.getElementById('val-health').innerText = playerResources.health;
+    document.getElementById('val-gold').innerText = playerResources.gold;
+    document.getElementById('val-suspicion').innerText = playerResources.suspicion;
+    document.getElementById('val-prowess').innerText = stats.prowess;
+    document.getElementById('val-rhetoric').innerText = stats.rhetoric;
+    document.getElementById('val-subterfuge').innerText = stats.subterfuge;
+}
+
+function saveGame() {
+    const gameState = { stats, resources: playerResources, index: currentSceneIndex };
     localStorage.setItem('monsieur_save', JSON.stringify(gameState));
-    console.log("Progress Saved at: " + sceneFunctionName);
 }
 
 function loadGame() {
     const savedData = localStorage.getItem('monsieur_save');
     if (savedData) {
-        const gameState = JSON.parse(savedData);
-        stats = gameState.stats;
-        playerResources = gameState.resources;
+        const data = JSON.parse(savedData);
+        // If data.index is undefined (old save), default to 0
+        currentSceneIndex = (typeof data.index === 'number') ? data.index : 0;
+        stats = data.stats;
+        playerResources = data.resources;
         
         startContainer.style.display = 'none';
-        // Execute the function name stored in the save
-        window[gameState.currentScene](); 
+        renderCurrentScene();
     }
 }
 
-// --- BUTTON LISTENERS ---
-startBtn.addEventListener('click', () => {
-    startContainer.style.opacity = '0';
-    setTimeout(() => {
-        startContainer.style.display = 'none';
-        playSequence();
-    }, 800);
-});
-
-continueBtn.addEventListener('click', loadGame);
-
-// --- CORE ENGINE ---
-function playSequence() {
-    if (currentStep >= introData.length) {
-        renderWorldOfTerror();
-        return;
-    }
-    const step = introData[currentStep];
-    imgLayer.style.opacity = 0;
-    textLayer.style.opacity = 0;
-
-    setTimeout(() => {
-        imgLayer.style.backgroundImage = `url('${IMG_PATH}${step.img}')`;
-        imgLayer.style.opacity = 1;
-        setTimeout(() => {
-            textLayer.innerText = step.text;
-            textLayer.style.opacity = 1;
-        }, 1200);
-        currentStep++;
-        setTimeout(playSequence, step.duration);
-    }, 1000);
-}
-
-function renderWorldOfTerror() {
-    imgLayer.style.opacity = 0;
-    setTimeout(() => {
-        imgLayer.style.backgroundImage = `url('${IMG_PATH}Ch1_Sc10.png')`;
-        imgLayer.style.opacity = 0.5;
-        textLayer.style.fontSize = "1.3rem"; 
-        textLayer.innerHTML = `
-        <div class="intermission-content">
-            <p>The year 1793 has no room for Lords.</p>
-            <p>You are Monsieur. Your titles are ash. One night to vanish, or to die.</p>
-            <button id="btn-allocate" class="game-btn">Allocate Skills</button>
-        </div>`;
-        textLayer.style.opacity = 1;
-        document.getElementById('btn-allocate').addEventListener('click', startSkillAllocation);
-    }, 2000);
-}
-
-// --- CHARACTER CREATION ---
-function startSkillAllocation() {
-    textLayer.style.opacity = 0;
-    setTimeout(() => {
-        textLayer.style.fontSize = "1.1rem"; 
-        renderSkillUI();
-        textLayer.style.opacity = 1;
-    }, 1000);
-}
-
-function renderSkillUI() {
-    textLayer.innerHTML = `
-        <div class="passport-container">
-            <h2 style="text-align: center;">LAISSEZ-PASSER</h2>
-            <div class="stat-row"><span>PROWESS</span> <div class="stat-controls">
-                <button class="stat-btn" onclick="updateStat('prowess', -1)">-</button>
-                <span>${stats.prowess}</span>
-                <button class="stat-btn" onclick="updateStat('prowess', 1)">+</button>
-            </div></div>
-            <div class="stat-row"><span>RHETORIC</span> <div class="stat-controls">
-                <button class="stat-btn" onclick="updateStat('rhetoric', -1)">-</button>
-                <span>${stats.rhetoric}</span>
-                <button class="stat-btn" onclick="updateStat('rhetoric', 1)">+</button>
-            </div></div>
-            <div class="stat-row"><span>SUBTERFUGE</span> <div class="stat-controls">
-                <button class="stat-btn" onclick="updateStat('subterfuge', -1)">-</button>
-                <span>${stats.subterfuge}</span>
-                <button class="stat-btn" onclick="updateStat('subterfuge', 1)">+</button>
-            </div></div>
-            <p style="text-align: center;">Points: ${pool}</p>
-            <button class="game-btn" style="width: 100%; ${pool > 0 ? 'opacity: 0.3;' : ''}" 
-                ${pool > 0 ? 'disabled' : ''} onclick="renderSafehouse()">Confirm Identity</button>
-        </div>`;
-}
-
-window.updateStat = (stat, change) => {
-    if (change > 0 && pool > 0) { stats[stat]++; pool--; }
-    else if (change < 0 && stats[stat] > 0) { stats[stat]--; pool++; }
-    renderSkillUI();
-};
-
-// --- SCENE 1: THE SAFEHOUSE ---
-function isTierAvailable(sceneType, lockSkill, tierType) {
+// --- ENGINE ---
+function isTierAvailable(scene, tierType) {
     const threshold = (tierType === 'A') ? 7 : 3;
     if (tierType === 'C') return true;
-    if (sceneType === "Open") {
+    if (scene.type === "Open") {
         return (stats.prowess >= threshold || stats.rhetoric >= threshold || stats.subterfuge >= threshold);
     } else {
-        return (stats[lockSkill.toLowerCase()] >= threshold);
+        return (stats[scene.lockSkill.toLowerCase()] >= threshold);
     }
 }
 
-window.renderSafehouse = function() {
-    // Save here so 'Continue' brings you back to the start of this scene
-    saveGame('renderSafehouse');
-
-    imgLayer.style.backgroundImage = `url('${IMG_PATH}Ch1_Sc1.png')`;
+function renderCurrentScene() {
+    saveGame();
+    updateStatusUI();
+    const scene = allScenes[currentSceneIndex];
+    
+    imgLayer.style.backgroundImage = `url('${IMG_PATH}${scene.img}')`;
     imgLayer.style.opacity = 1;
 
-    const scene = {
-        type: "Open",
-        lockSkill: "", 
-        intro: "The floorboards groaned under Monsieur’s boots...",
-        outro: "The attic door clicked shut behind him...",
-        tierA: "Slip through like a draft of cold air. [+2 Gold]",
-        tierB: "Panic spikes. Catch your shoulder. [-1 Health]",
-        tierC: "Pay the urchin for silence. [-2 Gold]"
-    };
-
-    const activeA = isTierAvailable(scene.type, scene.lockSkill, 'A');
-    const activeB = isTierAvailable(scene.type, scene.lockSkill, 'B');
+    const activeA = isTierAvailable(scene, 'A');
+    const activeB = isTierAvailable(scene, 'B');
 
     textLayer.innerHTML = `
         <div id="scene-wrapper" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-            <div id="narrative-box" style="background: rgba(0,0,0,0.8); padding: 25px; max-width: 900px; border-left: 4px solid #8b0000; text-align: left;">
+            <div id="narrative-box">
                 <p id="main-text" style="font-size: 1.2rem; font-style: normal;">${scene.intro}</p>
             </div>
             <div class="options-container">
-                <div class="tier-card"><h4>TIER A</h4><p>${scene.tierA}</p>
-                    <button class="game-btn" ${!activeA ? 'disabled' : ''} onclick="resolveTier('A', \`${scene.outro}\`, {gold: 2})">SELECT</button>
+                <div class="tier-card">
+                    <h4>TIER A ${scene.type === 'Lock' ? '['+scene.lockSkill.toUpperCase()+' 7+]' : ''}</h4>
+                    <p>${scene.tierA.text}</p>
+                    <button class="game-btn" ${!activeA ? 'disabled' : ''} onclick="resolveUniversalTier('A')">SELECT</button>
                 </div>
-                <div class="tier-card"><h4>TIER B</h4><p>${scene.tierB}</p>
-                    <button class="game-btn" ${!activeB ? 'disabled' : ''} onclick="resolveTier('B', \`${scene.outro}\`, {health: -1})">SELECT</button>
+                <div class="tier-card">
+                    <h4>TIER B ${scene.type === 'Lock' ? '['+scene.lockSkill.toUpperCase()+' 3+]' : ''}</h4>
+                    <p>${scene.tierB.text}</p>
+                    <button class="game-btn" ${!activeB ? 'disabled' : ''} onclick="resolveUniversalTier('B')">SELECT</button>
                 </div>
-                <div class="tier-card"><h4>TIER C</h4><p>${scene.tierC}</p>
-                    <button class="game-btn" onclick="resolveTier('C', \`${scene.outro}\`, {gold: -2})">SELECT</button>
+                <div class="tier-card">
+                    <h4>TIER C</h4>
+                    <p>${scene.tierC.text}</p>
+                    <button class="game-btn" onclick="resolveUniversalTier('C')">SELECT</button>
                 </div>
             </div>
         </div>`;
     textLayer.style.opacity = 1;
+}
+
+window.resolveUniversalTier = function(tierLetter) {
+    const scene = allScenes[currentSceneIndex];
+    const choice = scene[`tier${tierLetter}`];
+
+    if (choice.effect.gold) playerResources.gold += choice.effect.gold;
+    if (choice.effect.health) playerResources.health += choice.effect.health;
+    if (choice.effect.suspicion) playerResources.suspicion += choice.effect.suspicion;
+
+    updateStatusUI();
+    document.getElementById('main-text').innerText = scene.outro;
+
+    const nextTitle = allScenes[currentSceneIndex + 1] ? allScenes[currentSceneIndex + 1].title : "The End";
+    document.querySelector('.options-container').innerHTML = `
+        <button class="game-btn" onclick="advanceToNext()">Proceed to ${nextTitle}</button>
+    `;
 };
 
-window.resolveTier = function(tier, outro, effects) {
-    if (effects.gold) playerResources.gold += effects.gold;
-    if (effects.health) playerResources.health += effects.health;
-    
-    document.getElementById('main-text').innerText = outro;
-    document.querySelector('.options-container').innerHTML = `
-        <button class="game-btn" onclick="alert('Proceeding...')">Leave the Safehouse</button>
-    `;
+window.advanceToNext = function() {
+    currentSceneIndex++;
+    if (currentSceneIndex < allScenes.length) renderCurrentScene();
+    else alert("You have escaped Paris... for now.");
+};
+
+// --- INITIAL NAVIGATION ---
+startBtn.addEventListener('click', () => {
+    startContainer.style.display = 'none';
+    renderCurrentScene(); 
+});
+continueBtn.addEventListener('click', loadGame);
+
+// Character creation and stat update functions remain same, 
+// just ensure they call renderCurrentScene() at the end of Confirm Identity.
+window.updateStat = (stat, change) => {
+    if (change > 0 && pool > 0) { stats[stat]++; pool--; }
+    else if (change < 0 && stats[stat] > 0) { stats[stat]--; pool++; }
+    renderSkillUI(); // You'll need to keep your previous renderSkillUI function!
 };

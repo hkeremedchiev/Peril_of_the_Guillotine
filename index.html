@@ -9,6 +9,16 @@
 <body>
 
 <div id="intro-container">
+    <div id="status-bar" style="display: none;">
+        <div class="stat-item">❤️ Health: <span id="val-health">10</span></div>
+        <div class="stat-item">💰 Gold: <span id="val-gold">5</span></div>
+        <div class="stat-item">👁️ Suspicion: <span id="val-suspicion">0</span></div>
+        <div class="stat-spacer"></div>
+        <div class="stat-item p-color">P: <span id="val-prowess">0</span></div>
+        <div class="stat-item r-color">R: <span id="val-rhetoric">0</span></div>
+        <div class="stat-item s-color">S: <span id="val-subterfuge">0</span></div>
+    </div>
+
     <div id="start-prompt-container">
         <h1 id="game-setting">Paris, 1793</h1>
         <button id="start-btn" class="game-btn">Begin the Trial</button>
@@ -20,6 +30,6 @@
     <div id="text-overlay"></div>
 </div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
