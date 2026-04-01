@@ -1,6 +1,9 @@
+/* --- BASE LAYOUT --- */
 body, html {
-    margin: 0; padding: 0;
-    width: 100%; height: 100%;
+    margin: 0; 
+    padding: 0;
+    width: 100%; 
+    height: 100%;
     background-color: black;
     overflow: hidden;
     display: flex;
@@ -10,19 +13,33 @@ body, html {
 
 #intro-container {
     position: relative;
-    width: 100%; height: 100%;
-    cursor: pointer;
+    width: 100%; 
+    height: 100%;
 }
 
+/* --- IMAGE LAYER (The Backgrounds) --- */
 #image-layer {
-    width: 100%; height: 100%;
+    width: 100%; 
+    height: 100%;
     background-size: cover;
     background-position: center;
     transition: opacity 2.5s ease-in-out;
     opacity: 0;
-    filter: sepia(20%) contrast(110%); /* Adds a bit more grit */
+    filter: sepia(20%) contrast(110%);
+    z-index: 1;
 }
 
+/* --- ATMOSPHERIC VIGNETTE --- */
+#vignette {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 30%, black 150%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* --- TEXT OVERLAY --- */
 #text-overlay {
     position: absolute;
     bottom: 20%;
@@ -35,25 +52,47 @@ body, html {
     text-shadow: 0px 0px 15px black;
     opacity: 0;
     transition: opacity 2s ease-in-out;
-    pointer-events: none;
-}
-
-#vignette {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%);
-    pointer-events: none;
-}
-
-#start-prompt {
-    position: absolute;
-    color: #444;
-    font-family: sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-size: 0.8rem;
     z-index: 10;
+    pointer-events: auto; 
 }
+
+/* --- THE UNIFIED "SHINY DARK RED" BUTTON --- */
+.game-btn {
+    padding: 18px 40px;
+    background: rgba(10, 10, 10, 0.9); /* Almost black */
+    border: 1px solid #eeeeee; /* The clean frame */
+    color: #eeeeee;
+    font-family: 'Garamond', serif;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    cursor: pointer;
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* Smoother transition */
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    display: inline-block;
+    margin-top: 25px;
+    outline: none;
+}
+
+/* THE PERFECTED DARK HOVER */
+.game-btn:hover {
+    /* Deeper, darker wine red */
+    background: rgba(60, 0, 0, 0.95) !important; 
+    color: #ffffff;
+    /* Frame turns to a dark, slightly metallic red */
+    border-color: #8b0000; 
+    
+    /* THE SHINE: 
+       Outer: Dark crimson glow. 
+       Inner: Subtle highlight on the top edge for a "shiny" look */
+    box-shadow: 0 0 30px rgba(80, 0, 0, 0.9), 
+                inset 0 0 20px rgba(0, 0, 0, 0.6), 
+                inset 0 5px 10px rgba(255, 0, 0, 0.2);
+    
+    transform: scale(1.02);
+}
+
+/* --- START MENU UI --- */
 #start-prompt-container {
     position: absolute;
     bottom: 25%;
@@ -73,41 +112,14 @@ body, html {
     letter-spacing: 8px;
     margin-bottom: 20px;
     opacity: 0.8;
-    font-weight: normal;
-}
-/* Adjust the button so it doesn't need its own centering logic anymore */
-#start-btn {
-    position: relative; /* Changed from absolute */
-    bottom: 0; 
-    left: 0;
-    transform: none;
-    z-index: 100;
-    padding: 18px 40px;
-    background: rgba(10, 10, 10, 0.85); /* Deep charcoal */
-    border: 1px solid #eeeeee; /* Crisp white border */
-    color: #eeeeee;
-    font-family: 'Garamond', serif;
-    font-size: 1.5rem;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-#start-btn:hover {
-    color: #bc0000; /* A slightly more "dried blood" red */
-    border-color: #bc0000;
-    background: rgba(20, 0, 0, 0.9);
-    letter-spacing: 7px; /* Subtle expansion effect on hover */
-    box-shadow: 0 0 20px rgba(188, 0, 0, 0.3);
+/* --- INTERMISSION CONTENT --- */
+.intermission-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-style: normal;
+    font-size: 1.3rem;
+    padding: 20px;
 }
-
-/* Ensure the text overlay uses the same positioning */
-#text-overlay {
-    position: absolute;
-    bottom: 20%;
-    width: 100%;
-    text-align: center;
-   }
-
