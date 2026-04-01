@@ -62,9 +62,8 @@ function renderWorldOfTerror() {
         `;
         textLayer.style.opacity = 1;
 
-        document.getElementById('btn-allocate').addEventListener('click', () => {
-            alert("Skill system initializing...");
-        });
+        // Locate where you create the allocate button and add this listener:
+        document.getElementById('btn-allocate').addEventListener('click', startSkillAllocation);
     }, 2000);
 }
 
@@ -77,3 +76,88 @@ startBtn.addEventListener('click', (e) => {
         playSequence();
     }, 800);
 });
+
+// --- P-R-S System Stats ---
+let stats = { prowess: 0, rhetoric: 0, subterfuge: 0 }; 
+let pool = 12;
+
+// Call this function when the "ALLOCATE SKILLS" button is clicked
+function startSkillAllocation() {
+    const textLayer = document.getElementById('text-overlay');
+    textLayer.style.opacity = 0;
+
+    setTimeout(() => {
+        // Change the font size slightly to fit the document
+        textLayer.style.fontSize = "1.1rem"; 
+        renderSkillUI();
+        textLayer.style.opacity = 1;
+    }, 1000);
+}
+
+function renderSkillUI() {
+    const textLayer = document.getElementById('text-overlay');
+    
+    textLayer.innerHTML = `
+        <div class="passport-container">
+            <h2 style="text-align: center; margin-bottom: 5px; letter-spacing: 3px;">LAISSEZ-PASSER</h2>
+            <p style="font-style: italic; text-align: center; font-size: 0.9rem; margin-bottom: 20px; color: #444;">
+                Forge your identity, Citizen. The Committee is watching.
+            </p>
+            
+            <div class="stat-row">
+                <span>PROWESS</span> 
+                <div class="stat-controls">
+                    <button class="stat-btn" onclick="updateStat('prowess', -1)">-</button>
+                    <span style="min-width: 25px; display: inline-block; text-align: center;">${stats.prowess}</span>
+                    <button class="stat-btn" onclick="updateStat('prowess', 1)">+</button>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <span>RHETORIC</span> 
+                <div class="stat-controls">
+                    <button class="stat-btn" onclick="updateStat('rhetoric', -1)">-</button>
+                    <span style="min-width: 25px; display: inline-block; text-align: center;">${stats.rhetoric}</span>
+                    <button class="stat-btn" onclick="updateStat('rhetoric', 1)">+</button>
+                </div>
+            </div>
+
+            <div class="stat-row">
+                <span>SUBTERFUGE</span> 
+                <div class="stat-controls">
+                    <button class="stat-btn" onclick="updateStat('subterfuge', -1)">-</button>
+                    <span style="min-width: 25px; display: inline-block; text-align: center;">${stats.subterfuge}</span>
+                    <button class="stat-btn" onclick="updateStat('subterfuge', 1)">+</button>
+                </div>
+            </div>
+
+            <div id="pool-display" style="text-align: center; margin-top: 15px; font-weight: bold; color: #8b0000;">
+                Points Remaining: ${pool}
+            </div>
+
+            <button id="confirm-identity" class="game-btn" 
+                style="width: 100%; margin-top: 20px; font-size: 1rem; ${pool > 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}" 
+                ${pool > 0 ? 'disabled' : ''} 
+                onclick="confirmIdentity()">
+                Confirm Identity
+            </button>
+        </div>
+    `;
+}
+
+// These functions must be attached to the window so the HTML buttons can find them
+window.updateStat = function(stat, change) {
+    if (change > 0 && pool > 0) {
+        stats[stat]++;
+        pool--;
+    } else if (change < 0 && stats[stat] > 0) {
+        stats[stat]--;
+        pool++;
+    }
+    renderSkillUI();
+};
+
+window.confirmIdentity = function() {
+    alert("Identity Forged. The shadows of Paris await.");
+    // This is where Chapter 1 Scene 1 will eventually trigger
+};

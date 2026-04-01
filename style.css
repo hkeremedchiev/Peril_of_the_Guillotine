@@ -123,3 +123,46 @@ body, html {
     font-size: 1.3rem;
     padding: 20px;
 }
+
+/* --- PASSPORT UI --- */
+.passport-container {
+    background: #e6d5b8; /* Weathered Parchment */
+    color: #1a1512; /* Faded Ink */
+    padding: 30px;
+    border: 1px solid #c4b498;
+    transform: rotate(-1deg); 
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    width: 350px;
+    margin: 0 auto;
+    text-align: left;
+    font-family: 'Crimson Text', 'Garamond', serif;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+    font-weight: bold;
+    font-style: normal; /* Removes inherited italics */
+}
+
+.stat-controls {
+    display: flex;
+    align-items: center;
+}
+
+.stat-btn {
+    background: #1a1512;
+    color: #e6d5b8;
+    border: none;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: 0.2s;
+}
+
+.stat-btn:hover {
+    background: #8b0000; /* Red hover for the parchment buttons */
+}
