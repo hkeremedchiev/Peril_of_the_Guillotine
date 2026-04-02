@@ -78,14 +78,27 @@ body, html {
     pointer-events: auto; 
 }
 
+
 #narrative-box {
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.9); /* Darker for better contrast */
     border-left: 4px solid #8b0000;
-    padding: 20px 30px;
-    max-width: 900px;
-    margin-bottom: 20px;
+    padding: 30px 40px;
+    max-width: 800px;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    box-shadow: 0 0 50px rgba(0,0,0,1);
 }
 
+#narrative-box h2 {
+    font-family: 'Garamond', serif;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 0;
+}
+
+#narrative-box strong {
+    color: #ff6b6b; /* Highlight the danger words */
+}
 /* --- BUTTONS --- */
 .game-btn {
     padding: 18px 40px;
@@ -145,3 +158,6 @@ body, html {
     justify-content: space-between;
     min-height: 220px;
 }
+
+.safe-sus { color: #51cf66 !important; text-shadow: 0 0 5px rgba(81, 207, 102, 0.5); }
+.danger-sus { color: #ff6b6b !important; text-shadow: 0 0 10px rgba(255, 107, 107, 0.8); }
