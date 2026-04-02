@@ -9,6 +9,21 @@ let playerResources = { health: 10, gold: 5, suspicion: 0 };
 let currentSceneIndex = 0;
 let hasMap = false; // Maître Valmont’s Map
 
+
+// Add to Global State
+const voicePlayer = new Audio();
+const VO_PATH = "Speach/"; 
+
+/**
+ * Global function to play VO with a specific naming convention
+ * @param {string} fileName - e.g., "Ch1_Sc1_Intro"
+ */
+function playVO(fileName) {
+    voicePlayer.pause(); // Stop any current speech
+    voicePlayer.src = `${VO_PATH}${fileName}.mp3`;
+    voicePlayer.play().catch(e => console.log("VO file not found or blocked:", fileName));
+}
+
 // Difficulty thresholds per Chapter
 const thresholds = {
     1: { A: 7, B: 3 }, // Paris
@@ -17,6 +32,7 @@ const thresholds = {
 };
 // --- DATABASE: ADD ALL SCENES HERE ---
 const allScenes = [
+    // SCENE 1: THE SAFEHOUSE
     {
         title: "The Safehouse",
         img: "Ch1_Sc1.png",
@@ -26,18 +42,124 @@ const allScenes = [
         outro: "The attic door clicked shut behind him, leaving his old life in the dust. Monsieur descended the back stairs, blending into the early morning gray of the Rue Saint-Honoré, where the city was already waking up hungry.",
         tierA: { text: "Slip through like a draft of cold air. Find hidden coins. [+2 Gold]", effect: {gold: 2} },
         tierB: { text: "Panic spikes. Bolt for the stairs and catch your shoulder. [-1 Health]", effect: {health: -1} },
-        tierC: { text: "An urchin watches the door. Buy his silence with gold. [-2 Gold]", effect: {gold: -2} }
+        tierC: { text: "A street urchin watches the door. Buy his silence. [-2 Gold]", effect: {gold: -2} }
     },
+
+    // SCENE 2: THE BREAD LINE
     {
         title: "The Bread Line",
         img: "Ch1_Sc2.png",
-        type: "Lock",
-        lockSkill: "rhetoric", 
-        intro: "Monsieur found himself swept into a queue of hollow-cheeked citizens waiting for a ration of gray, sawdust-heavy bread. Beside him, a woman with eyes like flint studied the softness of his hands. To remain silent was to be suspicious; to speak was to risk the wrong accent.",
-        outro: "Chewing on the hard crust of his survival, Monsieur kept his chin tucked into his collar. He avoided the main thoroughfares until the massive shadow of the Porte Saint-Martin blocked his path.",
-        tierA: { text: "Mutter a dark joke about the 'sawdust seasoning'. They pull you into the crowd. [+1 Gold]", effect: {gold: 1} },
-        tierB: { text: "Drop a coin into the mud as a 'clumsy' accident to deflect her gaze. [-1 Gold]", effect: {gold: -1} },
-        tierC: { text: "A Sergeant smells the 'Versailles' on you. Slide your last purse into his hand. [-3 Gold]", effect: {gold: -3} }
+        type: "Locked",
+        lockSkill: "Rhetoric",
+        intro: "Monsieur found himself swept into a queue of hollow-cheeked citizens waiting for a ration of gray, sawdust-heavy bread. The air was thick with the scent of unwashed wool and sour wine. Beside him, a woman with eyes like flint studied the softness of his hands. To remain silent was to be suspicious; to speak was to risk the wrong accent. He smoothed his coat, trying to mimic the weary slump of the desperate, and prepared his tongue for the most dangerous lie of his life.",
+        outro: "Chewing on the hard crust of his survival, Monsieur kept his chin tucked into his collar. He avoided the main thoroughfares, sticking to the damp capillaries of the city until the silent shadow of the Porte Saint-Martin blocked his path.",
+        tierA: { text: "Lean into the hunger. Mutter a dark joke. [+1 Gold]", effect: {gold: 1} },
+        tierB: { text: "Keep your head down. Drop a coin to distract the woman. [-1 Gold]", effect: {gold: -1} },
+        tierC: { text: "A Sergeant smells the 'Versailles' on you. Bribe him to vanish. [-3 Gold]", effect: {gold: -3} }
+    },
+
+    // SCENE 3: THE SENTRY
+    {
+        title: "The Sentry",
+        img: "Ch1_Sc3.png",
+        type: "Locked",
+        lockSkill: "Prowess",
+        intro: "The archway loomed ahead, a throat of cold stone guarded by a single flickering lantern. Beneath it stood a National Guardsman, his musket leaning lazily against his shoulder. There was no gold for a bribe and no words for a plea; there was only the distance between Monsieur's hiding spot and the guard’s throat. The moonlight caught the silver of a discarded blade in the mud. Monsieur reached for it.",
+        outro: "Adrenaline turned his blood to ice now he has dealt with the threat the guard posed. He didn't look back; he couldn't. The notary’s office was three blocks away, a sanctuary of paper in a city of steel.",
+        tierA: { text: "Move with a predator’s grace. Silent strike. [-5 Suspicion]", effect: {suspicion: -5} },
+        tierB: { text: "The guard turns. You drive the blade home but take a heavy blow. [-2 Health]", effect: {health: -2} },
+        tierC: { text: "The Dash: You realize you aren't a killer. Bolt through the archway. [-4 Health]", effect: {health: -4} }
+    },
+
+    // SCENE 4: THE NOTARY (MAP SCENE)
+    {
+        title: "The Notary",
+        img: "Ch1_Sc4.png",
+        type: "Locked",
+        lockSkill: "Subterfuge",
+        intro: "The office of Maître Valmont was a tomb of bureaucracy. Monsieur slipped through the window, his movements frantic. He knew the forged transit permits were here. He moved through the wreckage with the grace of a thief, his fingers dancing over hidden drawers, listening for the tread of the midnight patrol on the cobbles outside.",
+        outro: "With the forged permits tucked against his chest—a paper shield against the guillotine—Monsieur slipped back into the night. But the silence of the side streets was short-lived; a low, rhythmic roar began to shake the windows of the district.",
+        tierA: { text: "Find the hidden catch. Discover the Surveyor’s Map. [Map Acquired: +1 Bonus Ch 2]", effect: {gold: 0} }, // Map logic handled in code
+        tierB: { text: "Find the papers, but shatter an inkwell. Shouts go up. [+15 Suspicion]", effect: {suspicion: 15} },
+        tierC: { text: "The Smash: Splinter the mahogany with a poker. Escape wounded. [-3 Health]", effect: {health: -3} }
+    },
+
+    // SCENE 5: THE RIOT
+    {
+        title: "The Riot",
+        img: "Ch1_Sc5.png",
+        type: "Open",
+        lockSkill: "",
+        intro: "The street erupted in a cacophony of breaking glass and splintering wood. A mob, fueled by cheap brandy and three centuries of resentment, poured into the square. Monsieur was caught in the current, pulled toward a bonfire where an effigy of the King was already turning to ash. Faces smeared with soot and coal-dust pressed against his. He was a grain of sand in a storm of iron. To fight was suicide; to run was impossible. He had to blend into the madness, or be consumed by it.",
+        outro: "Monsieur cast one final, haunted look at the embers of the bonfire before slipping into a narrow passage behind a tanner’s shop. The roar of the mob faded into a dull, rhythmic thrumming, replaced by the damp, heavy scent of the Seine. He followed the slope of the land downward, his boots slick with refuse, until the jagged silhouettes of the masts appeared against the moonlit fog.",
+        tierA: { text: "Lead the chant. Snatch a pike and belt the Marseillaise. [Success]", effect: {} },
+        tierB: { text: "The Struggle: Pushed into the soot and elbowed in the ribs. [-2 Health]", effect: {health: -2} },
+        tierC: { text: "Fling a handful of silver to distract the Sans-culottes. [-2 Gold]", effect: {gold: -2} }
+    },
+
+    // SCENE 6: THE WHARF
+    {
+        title: "The Wharf",
+        img: "Ch1_Sc6.png",
+        type: "Locked",
+        lockSkill: "Prowess",
+        intro: "The stench of rotting fish and stale water rose to meet him as he reached the Quai de la Rapée. The Seine was a black ribbon beneath the moon, choked with skeletal barges and the debris of a city in upheaval. A single, heavy-set dockworker stood guard over the only skiff tethered to the iron ring. He was a man of thick neck and calloused hands, a sentinel of the river who looked at Monsieur’s fine coat with a hunger that had nothing to do with politics.",
+        outro: "Leaving the hardened sailor behind, Monsieur scrambled into the shadows of the warehouse district. The river was behind him, but the heart of the Section—the most radicalized quarter of the city—lay directly in his path.",
+        tierA: { text: "Show the 'silver blade.' Look like a man with nothing to lose. [+1 Gold]", effect: {gold: 1} },
+        tierB: { text: "A messy fight in the fish-guts. You win, but fingers are broken. [-3 Health]", effect: {health: -3} },
+        tierC: { text: "The Dive: Guards appear. Dive into the freezing Seine. [-5 Health]", effect: {health: -5} }
+    },
+
+    // SCENE 7: THE TAVERN
+    {
+        title: "The Tavern",
+        img: "Ch1_Sc7.png",
+        type: "Open",
+        lockSkill: "",
+        intro: "The Le Chien Enragé was a low-ceilinged den of smoke and sedition, the air thick with the smell of spilled ale and unwashed bodies. Monsieur stepped into the heat, his eyes stinging. Somewhere in this crowded room sat a man with a red carnation pinned to a filthy lapel—his only link to a world outside these walls. Monsieur took a seat at a corner table, hiding his trembling hands beneath the scarred wood, and signaled for a drink. He had to look like a man with nowhere else to go.",
+        outro: "The barkeep slammed another chipped mug of sour wine onto the table, and for a moment, Monsieur was just another shadow in the gloom. He settled into the noise, his eyes scanning the flickering lantern-light for the red flower, waiting for the moment to move.",
+        tierA: { text: "Join a rowdy toast. The barkeep provides salted herring. [+3 Health]", effect: {health: 3} },
+        tierB: { text: "Sit too stiff. A drunk loudly wonders about the 'gentleman.' Bribe him. [+10 Suspicion]", effect: {suspicion: 10} },
+        tierC: { text: "Shout for a round of ale for every man in the bar. [-2 Gold]", effect: {gold: -2} }
+    },
+
+    // SCENE 8: THE MOUCHARD
+    {
+        title: "The Mouchard",
+        img: "Ch1_Sc8.png",
+        type: "Locked",
+        lockSkill: "Subterfuge",
+        intro: "He spotted his contact at the far end of the bar, but Monsieur’s blood ran cold before he could stand. Seated barely three feet from the target was a 'Mouchard'—a police spy recognizable by his too-attentive silence and the way he toyed with a lead-weighted cane. The spy’s eyes were darting, searching for the very slip-up Monsieur was about to make. To approach the contact now was to walk straight into the Conciergerie. Monsieur had to remove this predator from the board without a single drop of blood being spilled.",
+        outro: "As the spy grumbled and finally left the tavern, cursing and looking frantically in all directions.—Monsieur breathed a silent prayer of thanks. The path to the red carnation was clear, but the clock on the tavern wall was ticking toward the final hour of the night.",
+        tierA: { text: "Snag a bottle and 'clumsily' tip it into the spy's lap. [Success]", effect: {} },
+        tierB: { text: "Lead him away with a whispered rumor. He memorizes your face. [+25 Suspicion]", effect: {suspicion: 25} },
+        tierC: { text: "The Chaos: Upend the table onto him and escape through the kitchen. [+40 Suspicion]", effect: {suspicion: 40} }
+    },
+
+    // SCENE 9: THE CODE
+    {
+        title: "The Code",
+        img: "Ch1_Sc9.png",
+        type: "Locked",
+        lockSkill: "Rhetoric",
+        intro: "Monsieur slid onto the bench beside the man with the carnation. Neither looked at the other. The room was loud, but their world had shrunk to a few inches of table-space. 'The wind blows cold from the East,' Monsieur whispered, the first half of a password that felt like a death sentence on his tongue. He needed the man to believe he was who he claimed to be, and more importantly, he needed the specific coordinates of the escape. One wrong word, one slip into the 'refined' vowels of Versailles, and the contact would vanish into the smoke.",
+        outro: "The contact leaned in, his voice a ghost of a rasp: 'The black coach. Midnight. The Porte Saint-Martin. Mention the Notary’s name.' Monsieur felt a slip of paper pressed into his palm. He stood up without a word, his destination finally clear: the Great Gate and the road beyond.",
+        tierA: { text: "Flawless delivery. He shares his traveling rations. [+2 Health]", effect: {health: 2} },
+        tierB: { text: "Stumble over the phrase. Convince him with a heavy bribe. [-2 Gold]", effect: {gold: -2} },
+        tierC: { text: "The Threat: Press the blade against his ribs. He talks. [+30 Suspicion]", effect: {suspicion: 30} }
+    },
+
+    // SCENE 10: THE FINALE (PARIS EXIT)
+    {
+        title: "The Finale",
+        img: "Ch1_Sc10.png",
+        type: "Open",
+        lockSkill: "",
+        intro: "The Porte Saint-Martin was a fortress of wood and iron, illuminated by the orange glare of massive braziers. A heavy black coach sat idling near the barrier, its horses stamping their hooves in the freezing mist. Monsieur reached the carriage door, his fingers clutching the forged permits from Maître Valmont’s office. A guard stepped forward, his lantern swinging high to illuminate Monsieur’s face. The permits had to hold. The lie had to be perfect. Behind him lay the guillotine; ahead, the dark, silent promise of the open road.",
+        outro: "The wheel-rims bit into the soft mud as the coach lurched forward, passing through the shadow of the gate and into the terrifying, infinite silence of the woods. Paris was a smudge of orange fire on the horizon. Monsieur leaned back against the moth-eaten velvet of the seat, his eyes closing as the first breath of rural air—cold, clean, and lonely—filled his lungs.",
+        tierA: { text: "Hand over permits with an arrogant yawn. [Success]", effect: {} },
+        tierB: { text: "The Interrogation: Shaken and bruised by a long 'pat down.' [-3 Health]", effect: {health: -3} },
+        tierC: { text: "The bribe and a lethal threat. He lets you pass but alerts the cavalry. [+35 Suspicion]", effect: {suspicion: 35} }
     }
 ];
 
@@ -250,7 +372,9 @@ function renderCurrentScene() {
     
     imgLayer.style.backgroundImage = `url('${IMG_PATH}${scene.img}')`;
     imgLayer.style.opacity = 1;
-
+    const chapterNum = getChapter();
+    const sceneNum = currentSceneIndex + 1;
+    playVO(`Ch${chapterNum}_Sc${sceneNum}_Intro`);
     const activeA = isTierAvailable(scene, 'A');
     const activeB = isTierAvailable(scene, 'B');
 
@@ -284,7 +408,9 @@ window.resolveUniversalTier = function(tierLetter) {
     const scene = allScenes[currentSceneIndex];
     const choice = scene[`tier${tierLetter}`];
     let effect = choice.effect;
-
+    const chapterNum = getChapter();
+    const sceneNum = currentSceneIndex + 1;
+    playVO(`Ch${chapterNum}_Sc${sceneNum}_Outro`);
     // 1. Handle Suspicion (Can be negative)
     if (effect.suspicion) playerResources.suspicion += effect.suspicion;
 
@@ -367,28 +493,49 @@ window.updateStat = (stat, change) => {
 
 
 window.showIntermission = function() {
-    intermissionPoints = 3;
+    // 1. Apply the mechanical bonuses immediately in the background
     playerResources.health = Math.min(10, playerResources.health + 4);
     playerResources.suspicion = Math.max(-50, playerResources.suspicion - 20);
-    
-    renderIntermissionUI();
+    intermissionPoints = 3;
+
+    // 2. Start Phase 1: The Narrative Bridge
+    renderIntermissionNarrative();
 };
 
-function renderIntermissionUI() {
+function renderIntermissionNarrative() {
     updateStatusUI();
-    
-    // Placeholder for the new Chapter 2 transition image
-    imgLayer.style.backgroundImage = `url('${IMG_PATH}Ch2_Intermission_New.png')`; 
-    imgLayer.style.opacity = "0.3"; 
+    // Suggestion: A new background showing a carriage in the muddy woods
+    imgLayer.style.backgroundImage = `url('${IMG_PATH}Ch2_Bridge.png')`; 
+    imgLayer.style.opacity = "0.4";
+
+    // Play the Intermission VO if you have it
+    playVO("Intermission_Bridge"); 
 
     textLayer.innerHTML = `
         <div id="narrative-box">
-            <h2 style="text-align: center; color: #8b0000;">THE GATES OF PARIS</h2>
-            <p>Monsieur stood at the crest of the hill, looking back at the city. He had escaped the pikes of the sections, but the road to the coast promised no warmth. The Terror was spreading, and every road was choked with soldiers who saw a 'Monsieur' in every traveler with a quiet tongue.</p>
+            <h2 style="text-align: center; color: #8b0000;">BEYOND THE WALLS</h2>
+            <p>The rhythmic clop-clack of the horses’ hooves on the paving stones has softened into the wet thud of rural mud. Inside the coach, the air is freezing, smelling of old leather and the damp wool of Monsieur’s coat. Through the cracked window, the silhouette of the Paris walls has finally sunk below the horizon, replaced by the skeletal reach of winter oaks.</p>
+            <p>He is no longer a citizen of the Section; he is a ghost in the machine of the Republic. For the first time in days, his pulse slows. He closes his eyes, letting the exhaustion of the flight settle into his bones like lead.</p>
             
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="game-btn" onclick="renderIntermissionBonus()">Refine Resolve</button>
+            </div>
+        </div>
+    `;
+    textLayer.style.opacity = "1";
+}
+
+function renderIntermissionBonus() {
+    // Phase 2: The Skill Point screen
+    textLayer.innerHTML = `
+        <div id="narrative-box">
+            <h2 style="text-align: center; color: #8b0000;">THE FUGITIVE'S REFLECTION</h2>
+            <p style="text-align: center; font-style: italic;">Monsieur has survived the capital. The road to the coast will require new strengths.</p>
+            
+            <p style="text-align: center; color: #51cf66;">+4 Health | -20 Suspicion Applied</p>
             <hr style="border: 0; border-top: 1px solid #444; margin: 20px 0;">
-            <p style="text-align: center; font-style: italic;">Monsieur has learned from his flight. Distribute 3 points to sharpen his resolve.</p>
             
+            <h3 style="text-align: center;">Distribute 3 Skill Points</h3>
             <div class="stat-allocator">
                 <div class="alloc-row">
                     <span class="p-color">PROWESS [${stats.prowess}]</span> 
@@ -408,9 +555,8 @@ function renderIntermissionUI() {
                 <p>Points Remaining: <strong>${intermissionPoints}</strong></p>
                 <button class="game-btn" id="finish-inter-btn" 
                     ${intermissionPoints > 0 ? 'disabled' : ''} 
-                    onclick="advanceToNext()">Continue the Escape</button>
+                    onclick="advanceToNext()">Enter the Wilds</button>
             </div>
         </div>
     `;
-    textLayer.style.opacity = "1";
 }
