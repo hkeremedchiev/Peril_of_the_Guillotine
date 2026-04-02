@@ -379,7 +379,7 @@ function renderCurrentScene() {
     const activeB = isTierAvailable(scene, 'B');
 
     textLayer.innerHTML = `
-        <div id="scene-wrapper" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <div id="scene-wrapper" style="display: flex; flex-direction: column; width: 100%;">
             <div id="narrative-box">
                 <p id="main-text" style="font-size: 1.2rem; font-style: normal;">${scene.intro}</p>
             </div>
@@ -559,4 +559,8 @@ function renderIntermissionBonus() {
             </div>
         </div>
     `;
+}
+
+function wrapButtons(html) {
+    return `<div class="button-stack" style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">${html}</div>`;
 }
